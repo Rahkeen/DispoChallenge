@@ -16,8 +16,14 @@ import kotlinx.coroutines.launch
 data class AppState(
     val images: List<GiphyGif> = emptyList(),
     val searchQuery: String = "",
+    val selectedGif: GiphyGif? = null,
     val isError: Boolean = false
 )
+
+sealed class AppAction {
+    class Search(val query: String): AppAction()
+    class SelectGif(val selectedGif: GiphyGif): AppAction()
+}
 
 class AppStoreViewModel(
     initialState: AppState,
@@ -31,6 +37,17 @@ class AppStoreViewModel(
 
     fun states(): StateFlow<AppState> {
         return appStates.asStateFlow()
+    }
+
+    fun send(action: AppAction) {
+        when(action) {
+            is AppAction.Search -> {
+                search(query = action.query)
+            }
+            is AppAction.SelectGif -> {
+                selectGif(gif = action.selectedGif)
+            }
+        }
     }
 
     fun search(query: String) {
@@ -47,6 +64,10 @@ class AppStoreViewModel(
                 appStates.emit(AppState(isError = true, searchQuery = query))
             }
         }
+    }
+
+    fun selectGif(gif: GiphyGif) {
+        appStates.value = appStates.value.copy(selectedGif = gif)
     }
 
     private fun GiphyGifs.toAppState(query: String): AppState {

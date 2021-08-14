@@ -13,7 +13,7 @@ private const val BASE_URL = "https://api.giphy.com/v1/gifs/"
 private const val API_KEY = "74IXqjiV8RuLA2yZT2EuloLW9mHhIlna"
 
 const val DUMMY_GIF_URL =
-    "https://media3.giphy.com/media/28GHfhGFWpFgsQB4wR/giphy.gif?cid=b9a125e2ugi4dfyzanpo7uv1skzgo2qln3sa540fd124k9j4&rid=giphy.gif&ct=g"
+    "https://media1.giphy.com/media/nDSlfqf0gn5g4/giphy.gif?cid=b9a125e2inw13gauixd8pe0zgbg76js7rnm7z4w3mlfov9wv&rid=giphy.gif&ct=g"
 
 class GiphyRepository {
     private val retrofit = Retrofit.Builder()
@@ -57,10 +57,12 @@ data class GiphyGifs(
 
 @JsonClass(generateAdapter = true)
 data class GiphyGif(
+    @Json(name = "id") val id: String,
     @Json(name = "title") val title: String,
     @Json(name = "images") val images: GiphyImages,
     @Json(name = "rating") val rating: String,
-    @Json(name = "url") val url: String
+    @Json(name = "url") val url: String,
+    @Json(name = "username") val username: String
 )
 
 @JsonClass(generateAdapter = true)

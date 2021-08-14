@@ -10,7 +10,11 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.rikin.dispochallenge.data.GiphyRepository
+import com.rikin.dispochallenge.features.details.GifDetails
 import com.rikin.dispochallenge.features.feed.GifFeed
 import com.rikin.dispochallenge.ui.theme.DispoChallengeTheme
 
@@ -23,6 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    val navController = rememberNavController()
                     val appStoreViewModel: AppStoreViewModel by viewModels {
                         AppStoreViewModelFactory(
                             initialState = AppState(),
@@ -32,7 +37,18 @@ class MainActivity : ComponentActivity() {
 
                     val appState by appStoreViewModel.states().collectAsState()
 
-                    GifFeed(state = appState, searchAction = appStoreViewModel::search)
+                    NavHost(navController = navController, startDestination = AppLocation.Feed.name) {
+                        composable(AppLocation.Feed.name) {
+                            GifFeed(
+                                state = appState,
+                                actions = appStoreViewModel::send,
+                                navigate = { navController.navigate(it.name) }
+                            )
+                        }
+                        composable(AppLocation.Details.name) {
+                            GifDetails(selectedGif = appState.selectedGif!!)
+                        }
+                    }
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.rikin.dispochallenge.features.feed
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,21 +22,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
+import com.rikin.dispochallenge.AppAction
+import com.rikin.dispochallenge.AppLocation
 import com.rikin.dispochallenge.AppState
 import com.rikin.dispochallenge.data.GiphyGif
 import com.rikin.dispochallenge.ui.theme.DispoChallengeTheme
 
 @Composable
-fun GifFeed(state: AppState, searchAction: (String) -> Unit = {}) {
+fun GifFeed(
+    state: AppState,
+    actions: (AppAction) -> Unit = {},
+    navigate: (AppLocation) -> Unit = {}
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
             value = state.searchQuery,
-            onValueChange = {
-                searchAction(it)
-            }
+            onValueChange = { actions(AppAction.Search(it)) }
         )
 
         LazyColumn(
@@ -44,26 +49,35 @@ fun GifFeed(state: AppState, searchAction: (String) -> Unit = {}) {
                 .padding(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(items = state.images) { gif ->
-                GifRow(gif)
+            items(items = state.images, key = { it.id }) { gif ->
+                GifRow(
+                    state = gif,
+                    selectAction = { selectedGif ->
+                        actions(AppAction.SelectGif(selectedGif))
+                        navigate(AppLocation.Details)
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-fun GifRow(data: GiphyGif) {
+fun GifRow(state: GiphyGif, selectAction: (GiphyGif) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = 8.dp)
+            .clickable {
+                selectAction(state)
+            },
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = rememberImagePainter(
-                data = data.images.original.url,
+                data = state.images.original.url,
                 builder = {
                     crossfade(true)
                 }),
@@ -71,7 +85,7 @@ fun GifRow(data: GiphyGif) {
             modifier = Modifier.size(60.dp),
             contentScale = ContentScale.Crop
         )
-        Text(text = data.title, color = MaterialTheme.colors.onSurface)
+        Text(text = state.title, color = MaterialTheme.colors.onSurface)
     }
 }
 
