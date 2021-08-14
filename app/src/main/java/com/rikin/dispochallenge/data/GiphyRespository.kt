@@ -28,6 +28,12 @@ class GiphyRepository {
             client.getGifs(searchQuery = query)
         }
     }
+
+    suspend fun getFeaturedGifs(): GiphyGifs {
+        return withContext(Dispatchers.IO) {
+            client.getTrendingGifs()
+        }
+    }
 }
 
 interface GiphyService {
@@ -36,6 +42,11 @@ interface GiphyService {
     suspend fun getGifs(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("q") searchQuery: String
+    ): GiphyGifs
+
+    @GET("trending")
+    suspend fun getTrendingGifs(
+        @Query("api_key") apiKey: String = API_KEY
     ): GiphyGifs
 }
 

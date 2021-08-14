@@ -30,9 +30,9 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    val state by appStoreViewModel.states().collectAsState()
+                    val appState by appStoreViewModel.states().collectAsState()
 
-                    GifFeed(feed = state.images)
+                    GifFeed(state = appState, searchAction = appStoreViewModel::search)
                 }
             }
         }

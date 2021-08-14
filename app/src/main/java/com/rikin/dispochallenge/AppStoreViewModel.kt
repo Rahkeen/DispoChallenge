@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 
 data class AppState(
     val images: List<GiphyGif> = emptyList(),
+    val searchQuery: String = "",
     val isError: Boolean = false
 )
 
@@ -25,7 +26,7 @@ class AppStoreViewModel(
     private val appStates = MutableStateFlow(initialState)
 
     init {
-        search("Hello")
+        search(appStates.value.searchQuery)
     }
 
     fun states(): StateFlow<AppState> {
@@ -35,16 +36,21 @@ class AppStoreViewModel(
     fun search(query: String) {
         viewModelScope.launch {
             try {
-                val gifs = repository.getGifs(query)
-                appStates.emit(gifs.toAppState())
+                val gifs = if (query.isNotEmpty()) {
+                    repository.getGifs(query)
+                } else {
+                    repository.getFeaturedGifs()
+                }
+
+                appStates.emit(gifs.toAppState(query = query))
             } catch (error: Exception) {
-                appStates.emit(AppState(isError = true))
+                appStates.emit(AppState(isError = true, searchQuery = query))
             }
         }
     }
 
-    private fun GiphyGifs.toAppState(): AppState {
-        return AppState(images = data)
+    private fun GiphyGifs.toAppState(query: String): AppState {
+        return AppState(images = data, searchQuery = query)
     }
 }
 
