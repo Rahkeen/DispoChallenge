@@ -12,7 +12,8 @@ import retrofit2.http.Query
 private const val BASE_URL = "https://api.giphy.com/v1/gifs/"
 private const val API_KEY = "74IXqjiV8RuLA2yZT2EuloLW9mHhIlna"
 
-const val DUMMY_GIF_URL = "https://media3.giphy.com/media/28GHfhGFWpFgsQB4wR/giphy.gif?cid=b9a125e2ugi4dfyzanpo7uv1skzgo2qln3sa540fd124k9j4&rid=giphy.gif&ct=g"
+const val DUMMY_GIF_URL =
+    "https://media3.giphy.com/media/28GHfhGFWpFgsQB4wR/giphy.gif?cid=b9a125e2ugi4dfyzanpo7uv1skzgo2qln3sa540fd124k9j4&rid=giphy.gif&ct=g"
 
 class GiphyRepository {
     private val retrofit = Retrofit.Builder()
@@ -35,7 +36,7 @@ interface GiphyService {
     suspend fun getGifs(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("q") searchQuery: String
-    ) : GiphyGifs
+    ): GiphyGifs
 }
 
 @JsonClass(generateAdapter = true)

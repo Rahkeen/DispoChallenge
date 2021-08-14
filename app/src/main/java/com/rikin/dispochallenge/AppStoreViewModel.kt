@@ -21,8 +21,12 @@ data class AppState(
 class AppStoreViewModel(
     initialState: AppState,
     private val repository: GiphyRepository
-): ViewModel() {
+) : ViewModel() {
     private val appStates = MutableStateFlow(initialState)
+
+    init {
+        search("Hello")
+    }
 
     fun states(): StateFlow<AppState> {
         return appStates.asStateFlow()
@@ -30,12 +34,12 @@ class AppStoreViewModel(
 
     fun search(query: String) {
         viewModelScope.launch {
-           try {
-               val gifs = repository.getGifs(query)
-               appStates.emit(gifs.toAppState())
-           } catch(error: Exception) {
-               appStates.emit(AppState(isError = true))
-           }
+            try {
+                val gifs = repository.getGifs(query)
+                appStates.emit(gifs.toAppState())
+            } catch (error: Exception) {
+                appStates.emit(AppState(isError = true))
+            }
         }
     }
 
@@ -47,7 +51,7 @@ class AppStoreViewModel(
 class AppStoreViewModelFactory(
     private val initialState: AppState,
     private val repository: GiphyRepository
-): ViewModelProvider.Factory {
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return AppStoreViewModel(initialState, repository) as T
     }
