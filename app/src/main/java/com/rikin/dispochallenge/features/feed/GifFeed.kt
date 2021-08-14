@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -91,7 +90,7 @@ fun GifRow(state: GiphyGif, selectAction: (GiphyGif) -> Unit) {
             modifier = Modifier.size(60.dp),
             contentScale = ContentScale.Crop
         )
-        Text(text = state.title, color = MaterialTheme.colors.onSurface)
+        Text(text = state.title)
     }
 }
 
